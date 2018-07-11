@@ -34,7 +34,7 @@ export default {
     executeQuery () {
       const query = `spell_query=${this.dataSource}.${this.filter}${this.operator}${this.argument}`
 
-      exec(`simc ${query}`, { maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
+      exec(`simc "${query}"`, { maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
         if (err) {
           this.$q.notify({
             message: `Spell query failed: ${err.message}`,
