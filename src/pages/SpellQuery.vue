@@ -1,31 +1,49 @@
 <template>
   <q-page padding>
-    <div class="row gutter-md">
-      <div class="col-2">
-        <q-select float-label="Data Source" v-model="dataSource" :options="dataSources" class="no-margin" />
-      </div>
-      <div class="col-2">
-        <q-select float-label="Filter" v-model="filter" :options="filters" @input="setFilterType" class="no-margin" />
-      </div>
-      <div class="col">
-        <q-select float-label=" " v-model="operator" :options="filterType === Number ? numericOperators : stringOperators" class="no-margin" />
-      </div>
-      <div class="col-6">
-        <q-search float-label="Argument" v-model="argument" class="no-margin" />
-      </div>
-      <div class="col-auto">
-        <q-btn label="Run" size="form-label" @click.native="executeQuery" class="no-margin" />
-      </div>
+    <q-page-sticky position="top" expand>
+      <q-card class="full-width bg-white">
+        <q-card-main>
+          <div class="row gutter-md">
+            <div class="col-2">
+              <q-select float-label="Data Source" v-model="dataSource" :options="dataSources" class="no-margin" />
+            </div>
+            <div class="col-2">
+              <q-select float-label="Filter" v-model="filter" :options="filters" @input="setFilterType" class="no-margin" />
+            </div>
+            <div class="col">
+              <q-select float-label=" " v-model="operator" :options="filterType === Number ? numericOperators : stringOperators" class="no-margin" />
+            </div>
+            <div class="col-6">
+              <q-search float-label="Argument" v-model="argument" class="no-margin" @keyup.enter="executeQuery" />
+            </div>
+            <div class="col-auto">
+              <q-btn color="primary" label="Run" size="form-label" @click.native="executeQuery" class="no-margin" />
+            </div>
+          </div>
+        </q-card-main>
+      </q-card>
+    </q-page-sticky>
+
+    <div class="q-mt-xl">
+      <q-card v-for="(cardDatum, i) in cardData" :key="i" class="q-mt-lg fit query-result">
+        <q-card-title>
+          {{ cardDatum.name }}
+          <span slot="subtitle" v-if="cardDatum.description">{{ cardDatum.description }}</span>
+        </q-card-title>
+        <q-card-separator />
+        <q-card-main><pre>{{ cardDatum.data.join('\n') }}</pre></q-card-main>
+      </q-card>
     </div>
 
-    <q-card inline v-for="(cardDatum, i) in cardData" :key="i" class="q-mt-lg fit query-result">
-      <q-card-title>
-        {{ cardDatum.name }}
-        <span slot="subtitle" v-if="cardDatum.description">{{ cardDatum.description }}</span>
-      </q-card-title>
-      <q-card-separator />
-      <q-card-main><pre>{{ cardDatum.data.join('\n') }}</pre></q-card-main>
-    </q-card>
+    <q-btn
+      v-back-to-top
+      round
+      color="primary"
+      class="fixed-bottom-right"
+      style="margin: 0 15px 15px 0"
+    >
+      <q-icon name="keyboard_arrow_up" />
+    </q-btn>
   </q-page>
 </template>
 
@@ -35,6 +53,8 @@ import { exec } from 'child_process'
 export default {
   methods: {
     executeQuery () {
+      console.log(this)
+
       const query = `spell_query=${this.dataSource}.${this.filter}${this.operator}${this.argument}`
 
       exec(`simc "${query}"`, { maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
