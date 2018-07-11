@@ -19,7 +19,10 @@
     </div>
 
     <q-card inline v-for="(cardDatum, i) in cardData" :key="i" class="q-mt-lg fit query-result">
-      <q-card-title class="bg-primary text-white">{{ cardDatum.name }}</q-card-title>
+      <q-card-title>
+        {{ cardDatum.name }}
+        <span slot="subtitle" v-if="cardDatum.description">{{ cardDatum.description }}</span>
+      </q-card-title>
       <q-card-separator />
       <q-card-main><pre>{{ cardDatum.data.join('\n') }}</pre></q-card-main>
     </q-card>
@@ -44,23 +47,25 @@ export default {
         }
 
         const queryResults = stdout.split('\r\n\r\n').slice(1, -1)
-
         const cardData = []
 
         queryResults.forEach(queryResult => {
           const lines = queryResult.split('\r\n')
-          const nameLine = lines[0]
+          const [nameLine] = lines
 
           if (nameLine.length === 0) {
             return
           }
 
           const [, name] = nameLine.match(/Name\s+: (.+) \(id=/m)
+          const cardDatum = { name, data: lines }
+          const descriptionLine = lines.find(line => line.startsWith('Description'))
 
-          cardData.push({
-            name,
-            data: lines
-          })
+          if (descriptionLine) {
+            [, cardDatum.description] = descriptionLine.split(': ')
+          }
+
+          cardData.push(cardDatum)
         })
 
         this.cardData = cardData
@@ -96,8 +101,6 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import "~variables"
-
 .query-result >>> pre
   font-family "Roboto Mono"
   white-space pre-wrap
