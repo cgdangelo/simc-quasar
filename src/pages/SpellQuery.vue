@@ -59,6 +59,8 @@
 <script>
 import { exec } from 'child_process'
 
+const EOL = require('os').platform() === 'win32' ? '\r\n' : '\n';
+
 export default {
   methods: {
     showPremades () {
@@ -80,11 +82,9 @@ export default {
     },
     showPremadesDialog () { this.premadesDialog = true },
     executeQuery () {
-      console.log(this)
-
       const query = `spell_query=${this.dataSource}.${this.filter}${this.operator}${this.argument}`
 
-      exec(`simc "${query}"`, { maxBuffer: 1024 * 1024 }, (err, stdout, stderr) => {
+      exec(`simc "${query}"`, { maxBuffer: 1024 * 1024 }, (err, stdout) => {
         if (err) {
           this.$q.notify({
             message: `Spell query failed: ${err.message}`,
@@ -93,11 +93,11 @@ export default {
           })
         }
 
-        const queryResults = stdout.split('\r\n\r\n').slice(1, -1)
+        const queryResults = stdout.split(`${EOL}${EOL}`).slice(1, -1)
         const cardData = []
 
         queryResults.forEach(queryResult => {
-          const lines = queryResult.split('\r\n')
+          const lines = queryResult.split(EOL)
           const [nameLine] = lines
 
           if (nameLine.length === 0) {
@@ -106,6 +106,8 @@ export default {
 
           const [, name] = nameLine.match(/Name\s+: (.+) \(id=/m)
           const cardDatum = { name, data: lines }
+
+          // FIXME: This is broken for multi-line descriptions.
           const descriptionLine = lines.find(line => line.startsWith('Description'))
 
           if (descriptionLine) {
