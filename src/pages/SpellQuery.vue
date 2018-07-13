@@ -2,7 +2,45 @@
   <q-page padding>
     <q-card class="bg-white q-mb-xl">
       <q-card-main>
-        <div class="row gutter-md no-wrap">
+        <div
+          class="row gutter-sm justify-between"
+          v-if="manualMode"
+        >
+          <div class="col-9">
+            <q-input
+              v-model="manualQuery"
+              float-label="Manual Query"
+              prefix="spell_query="
+              class="no-margin"
+              @keyup.enter="executeQuery"
+            />
+          </div>
+          <div class="col">
+            <q-btn-group class="full-width">
+              <q-btn
+                outline
+                color="primary"
+                label="Run"
+                size="form-label"
+                @click="executeQuery"
+                style="width: 50%"
+              />
+              <q-btn
+                outline
+                color="primary"
+                label="Cancel"
+                size="form-label"
+                @click="manualMode = false"
+                style="width: 50%"
+              />
+            </q-btn-group>
+          </div>
+        </div>
+
+        <div
+          class="row gutter-md no-wrap"
+          v-else
+        >
           <div class="col">
             <q-select
               float-label="Data Source"
@@ -47,6 +85,13 @@
                 label="Premades"
                 size="form-label"
                 @click="showPremades"
+              />
+              <q-btn
+                outline
+                color="primary"
+                label="Manual"
+                size="form-label"
+                @click="manualMode = true"
               />
             </q-btn-group>
           </div>
@@ -157,7 +202,7 @@ export default {
       this.premadesDialog = true
     },
     executeQuery () {
-      const query = `spell_query=${this.dataSource}.${this.filter}${this.operator}${this.argument}`
+      const query = `spell_query=${this.manualMode ? this.manualQuery : `${this.dataSource}.${this.filter}${this.operator}${this.argument}`}`
 
       exec(`simc "${query}"`, {maxBuffer: 1024 * 1024}, (err, stdout) => {
         if (err) {
@@ -202,7 +247,7 @@ export default {
         const classChoice = await this.$q.dialog({
           options: {
             type: 'radio',
-            model: 'classChoice',
+            model: '',
             items: this.classes
           },
           cancel: true,
@@ -271,6 +316,8 @@ export default {
       argument: 'mage',
       premadesDialog: false,
       classDialog: false,
+      manualMode: false,
+      manualQuery: null,
       cardData: []
     }
   }
