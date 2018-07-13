@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <q-card class="bg-white">
+    <q-card class="bg-white q-mb-xl">
       <q-card-main>
         <div class="row gutter-md no-wrap">
           <div class="col">
@@ -79,6 +79,13 @@
       </template>
     </q-dialog>
 
+    <p
+      v-if="cardData.length > 0"
+      class="caption"
+    >
+      {{ cardData.length }} results
+    </p>
+
     <q-card
       v-for="(cardDatum, i) in cardData"
       :key="i"
@@ -104,8 +111,8 @@
       v-back-to-top
       round
       color="primary"
-      class="fixed-bottom-right"
-      style="margin: 0 15px 15px 0"
+      size="large"
+      class="fixed-bottom-right q-ma-md"
     >
       <q-icon name="keyboard_arrow_up" />
     </q-btn>
@@ -118,7 +125,7 @@ import {exec} from 'child_process'
 function createSelectChoices (choices) {
   return choices.map(choice => {
     if (typeof choice === 'string') {
-      return {$label: choice, value: choice.toLowerCase().replace(' ', '_')}
+      return {label: choice, value: choice.toLowerCase().replace(' ', '_')}
     }
 
     return choice
