@@ -1,39 +1,48 @@
 <template>
   <q-page padding>
-    <q-page-sticky position="top" expand>
-      <q-card class="full-width bg-white">
-        <q-card-main>
-          <div class="row gutter-md">
-            <div class="col-2">
-              <q-select float-label="Data Source" v-model="dataSource" :options="dataSources" class="no-margin" />
-            </div>
-            <div class="col-2">
-              <q-select float-label="Filter" v-model="filter" :options="filters" @input="setFilterType" class="no-margin" />
-            </div>
-            <div class="col">
-              <q-select float-label=" " v-model="operator" :options="filterType === Number ? numericOperators : stringOperators" class="no-margin" />
-            </div>
-            <div class="col-6">
-              <q-search float-label="Argument" v-model="argument" class="no-margin" @keyup.enter="executeQuery" />
-            </div>
-            <div class="col-auto">
-              <q-btn color="primary" label="Run" size="form-label" @click.native="executeQuery" class="no-margin" />
-            </div>
+    <q-card class="bg-white">
+      <q-card-main>
+        <div class="row gutter-md no-wrap">
+          <div class="col">
+            <q-select float-label="Data Source" v-model="dataSource" :options="dataSources" />
           </div>
-        </q-card-main>
-      </q-card>
-    </q-page-sticky>
+          <div class="col">
+            <q-select float-label="Filter" v-model="filter" :options="filters" @input="setFilterType" />
+          </div>
+          <div class="col">
+            <q-select float-label=" " v-model="operator" :options="filterType === Number ? numericOperators : stringOperators" />
+          </div>
+          <div class="col">
+            <q-search float-label="Argument" v-model="argument" @keyup.enter="executeQuery" />
+          </div>
+          <div class="col-auto">
+            <q-btn-group >
+              <q-btn outline color="primary" label="Run" size="form-label" @click="executeQuery" />
+              <q-btn outline color="primary" label="Premades" size="form-label" @click="showPremades" />
+            </q-btn-group>
+          </div>
+        </div>
+      </q-card-main>
+    </q-card>
 
-    <div class="q-mt-xl">
-      <q-card v-for="(cardDatum, i) in cardData" :key="i" class="q-mt-lg fit query-result">
-        <q-card-title>
-          {{ cardDatum.name }}
-          <span slot="subtitle" v-if="cardDatum.description">{{ cardDatum.description }}</span>
-        </q-card-title>
-        <q-card-separator />
-        <q-card-main><pre>{{ cardDatum.data.join('\n') }}</pre></q-card-main>
-      </q-card>
-    </div>
+    <q-dialog stack-buttons v-model="premadesDialog" title="Premade Queries">
+      <template slot="buttons" slot-scope="props">
+        <q-btn outline label="List all Azerite traits for a class" />
+        <q-btn outline label="List all Azerite traits for a class" />
+        <q-btn outline label="List all Azerite traits for a class" />
+        <q-btn outline label="List all Azerite traits for a class" />
+        <q-btn outline label="List all Azerite traits for a class" />
+      </template>
+    </q-dialog>
+
+    <q-card v-for="(cardDatum, i) in cardData" :key="i" class="query-result q-mt-md">
+      <q-card-title class="bg-primary text-white">
+        {{ cardDatum.name }}
+        <span slot="subtitle" v-if="cardDatum.description" class="text-white">{{ cardDatum.description }}</span>
+      </q-card-title>
+      <q-card-separator />
+      <q-card-main><pre>{{ cardDatum.data.join('\n') }}</pre></q-card-main>
+    </q-card>
 
     <q-btn
       v-back-to-top
@@ -52,6 +61,24 @@ import { exec } from 'child_process'
 
 export default {
   methods: {
+    showPremades () {
+      if (this.$q.platform.is.mobile) {
+        this.showPremadesSheet()
+      } else {
+        this.showPremadesDialog()
+      }
+    },
+    showPremadesSheet () {
+      this.$q.actionSheet({
+        title: 'Premade Queries',
+        actions: [
+          { label: 'Find a spell by its id' },
+          { label: 'Find a spell by its name' },
+          { label: 'Find all spells for a class' }
+        ]
+      })
+    },
+    showPremadesDialog () { this.premadesDialog = true },
     executeQuery () {
       console.log(this)
 
@@ -114,6 +141,7 @@ export default {
       filter: 'class',
       operator: '==',
       argument: 'mage',
+      premadesDialog: false,
       cardData: []
     }
   }
@@ -121,6 +149,9 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.query-results
+  margin-top: 5rem
+
 .query-result >>> pre
   font-family "Roboto Mono"
   white-space pre-wrap
