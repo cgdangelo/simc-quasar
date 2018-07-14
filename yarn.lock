@@ -5372,7 +5372,7 @@ qs@~6.5.1:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
 
-quasar-cli@^0.16.0:
+quasar-cli@^0.16.4:
   version "0.16.4"
   resolved "https://registry.yarnpkg.com/quasar-cli/-/quasar-cli-0.16.4.tgz#43fb97b405ec5410a8f928e3802ba7c6ad7a9a70"
   dependencies:
