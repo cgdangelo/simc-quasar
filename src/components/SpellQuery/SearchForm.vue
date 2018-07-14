@@ -125,8 +125,9 @@ en-us:
   spellData:
     arcaneMissiles: Arcane Missiles
   spellQuery:
-    spellByNameTitle: Find a spell by name
-    spellByNameBody: Enter a spell name. You can enter a literal or pre-formatted name, e.g. @:spellData.arcaneMissiles or arcane_missiles.
+    spellByName:
+      title: Find a spell by name
+      body: Enter a spell name. You can enter a literal or pre-formatted name, e.g. Arcane Missiles or arcane_missiles.
 </i18n>
 
 <script>
@@ -243,8 +244,8 @@ export default {
 
       try {
         const name = await this.textPrompt(
-          this.$t('spellQuery.spellByNameTitle'),
-          this.$t('spellQuery.spellByNameBody')
+          this.$t('spellQuery.spellByName.title'),
+          this.$t('spellQuery.spellByName.body')
         )
 
         if (name == null || name.trim().length === 0) {
