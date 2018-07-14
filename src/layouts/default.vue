@@ -1,46 +1,52 @@
 <template>
   <q-layout view="hHh Lpr lFf">
     <q-layout-header>
-      <q-toolbar>
+      <q-toolbar
+        class="titlebar q-px-sm"
+        color="orange-6"
+      >
+        <q-toolbar-title>SimulationCraft</q-toolbar-title>
+
         <q-btn
           flat
-          dense
-          round
-          @click="leftDrawerOpen = !leftDrawerOpen"
-          aria-label="Menu"
-        >
-          <q-icon name="menu" />
-        </q-btn>
+          icon="mdi-window-minimize"
+          class="text-white"
+          @click="minimize"
+        />
 
-        <q-toolbar-title>
-          Quasar App
-          <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
-        </q-toolbar-title>
+        <q-btn
+          flat
+          icon="mdi-window-maximize"
+          class="text-white"
+          @click="maximize"
+        />
 
-        <q-select
-          v-model="$i18n.locale"
-          :options="availableLocales"
-          color="primary"
-          inverted
+        <q-btn
+          flat
+          icon="mdi-window-close"
+          class="text-white"
+          @click="currentWindow.close()"
         />
       </q-toolbar>
-    </q-layout-header>
 
-    <q-layout-drawer
-      v-model="leftDrawerOpen"
-      :content-class="$q.theme === 'mat' ? 'bg-grey-2' : null"
-    >
-      <q-list
-        no-border
-        link
-        inset-delimiter
-      >
-        <q-item to="spell_query">
-          <q-item-side icon="search" />
-          <q-item-main label="Spell Query" />
-        </q-item>
-      </q-list>
-    </q-layout-drawer>
+      <q-tabs align="justify">
+        <q-route-tab
+          label="Welcome"
+          icon="home"
+          to="/"
+          exact
+          slot="title"
+        />
+
+        <q-route-tab
+          label="Spell Query"
+          icon="alarm"
+          to="/spell_query"
+          exact
+          slot="title"
+        />
+      </q-tabs>
+    </q-layout-header>
 
     <q-page-container>
       <router-view />
@@ -49,6 +55,7 @@
 </template>
 
 <script>
+import {remote} from 'electron'
 import {openURL} from 'quasar'
 
 export default {
@@ -60,14 +67,30 @@ export default {
         // FIXME: Not sure what to do about lack of regional indicator support on desktop.
         {label: 'English (US)', value: 'en-us', stamp: '🇺🇸'},
         {label: 'German', value: 'de', stamp: '🇺🇸'}
-      ]
+      ],
+      currentWindow: remote.getCurrentWindow()
     }
   },
   methods: {
-    openURL
+    openURL,
+    maximize () {
+      this.currentWindow.isMaximized() ? this.currentWindow.unmaximize() : this.currentWindow.maximize()
+    },
+    minimize () {
+      this.currentWindow.minimize()
+    }
   }
 }
 </script>
 
-<style>
+<style
+  lang="stylus"
+  scoped
+>
+.titlebar
+  -webkit-app-region drag
+  -webkit-user-select none
+
+  >>> .q-btn
+    -webkit-app-region no-drag
 </style>
