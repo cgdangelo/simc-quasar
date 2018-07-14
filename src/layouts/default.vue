@@ -58,7 +58,8 @@ export default {
       leftDrawerOpen: this.$q.platform.is.desktop,
       availableLocales: [
         // FIXME: Not sure what to do about lack of regional indicator support on desktop.
-        {label: 'English (US)', value: 'en-us', stamp: '🇺🇸'}
+        {label: 'English (US)', value: 'en-us', stamp: '🇺🇸'},
+        {label: 'German', value: 'de', stamp: '🇺🇸'}
       ]
     }
   },

@@ -122,9 +122,11 @@
 
 <i18n>
 en-us:
+  spellData:
+    arcaneMissiles: Arcane Missiles
   spellQuery:
     spellByNameTitle: Find a spell by name
-    spellByNameBody: Enter a spell name. You can enter a literal or pre-formatted name, e.g. Arcane Missiles or arcane_missiles.
+    spellByNameBody: Enter a spell name. You can enter a literal or pre-formatted name, e.g. @:spellData.arcaneMissiles or arcane_missiles.
 </i18n>
 
 <script>
