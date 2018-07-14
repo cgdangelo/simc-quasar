@@ -20,6 +20,8 @@
         <q-select
           v-model="$i18n.locale"
           :options="availableLocales"
+          color="primary"
+          inverted
         />
       </q-toolbar>
     </q-layout-header>
@@ -55,7 +57,8 @@ export default {
     return {
       leftDrawerOpen: this.$q.platform.is.desktop,
       availableLocales: [
-        {label: 'English (US)', value: 'en-us'}
+        // FIXME: Not sure what to do about lack of regional indicator support on desktop.
+        {label: 'English (US)', value: 'en-us', stamp: '🇺🇸'}
       ]
     }
   },
