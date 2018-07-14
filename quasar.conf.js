@@ -31,6 +31,14 @@ module.exports = function (ctx) {
           loader: 'eslint-loader',
           exclude: /(node_modules|quasar)/
         })
+
+        cfg.module.rules.push({
+          resourceQuery: /blockType=i18n/,
+          use: [
+            {loader: '@kazupon/vue-i18n-loader'},
+            {loader: 'yaml-loader'}
+          ]
+        })
       }
     },
     devServer: {

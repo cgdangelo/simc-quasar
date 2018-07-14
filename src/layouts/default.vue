@@ -16,6 +16,11 @@
           Quasar App
           <div slot="subtitle">Running on Quasar v{{ $q.version }}</div>
         </q-toolbar-title>
+
+        <q-select
+          v-model="$i18n.locale"
+          :options="availableLocales"
+        />
       </q-toolbar>
     </q-layout-header>
 
@@ -42,13 +47,16 @@
 </template>
 
 <script>
-import { openURL } from 'quasar'
+import {openURL} from 'quasar'
 
 export default {
   name: 'LayoutDefault',
   data () {
     return {
-      leftDrawerOpen: this.$q.platform.is.desktop
+      leftDrawerOpen: this.$q.platform.is.desktop,
+      availableLocales: [
+        {label: 'English (US)', value: 'en-us'}
+      ]
     }
   },
   methods: {

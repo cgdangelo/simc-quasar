@@ -1,7 +1,6 @@
-// This is just an example,
-// so you can safely delete all default props below
-
 export default {
-  failed: 'Action failed',
-  success: 'Action was successful'
+  spellQuery: {
+    spellByNameTitle: 'Find spell by name',
+    spellByNameBody: 'Enter a spell name. You can enter a literal or pre-formatted name, e.g. Arcane Missiles or arcane_missiles.'
+  }
 }

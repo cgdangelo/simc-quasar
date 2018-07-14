@@ -9,7 +9,7 @@
           <div class="col">
             <q-input
               v-model="manualQuery"
-              float-label="Manual Query"
+              stack-label="Manual Query"
               prefix="spell_query="
               class="no-margin"
               @keyup.enter="executeQuery"
@@ -120,6 +120,13 @@
   </div>
 </template>
 
+<i18n>
+en-us:
+  spellQuery:
+    spellByNameTitle: Find a spell by name
+    spellByNameBody: Enter a spell name. You can enter a literal or pre-formatted name, e.g. Arcane Missiles or arcane_missiles.
+</i18n>
+
 <script>
 function createSelectChoices (choices) {
   return choices.map(choice => {
@@ -135,7 +142,19 @@ export default {
   name: 'SearchForm',
   data () {
     return {
-      classes: createSelectChoices(['Death Knight', 'Druid', 'Hunter', 'Mage', 'Monk', 'Paladin', 'Priest', 'Rogue', 'Shaman', 'Warlock', 'Warrior']),
+      classes: createSelectChoices([
+        'Death Knight',
+        'Druid',
+        'Hunter',
+        'Mage',
+        'Monk',
+        'Paladin',
+        'Priest',
+        'Rogue',
+        'Shaman',
+        'Warlock',
+        'Warrior'
+      ]),
       dataSources: createSelectChoices(['Azerite', 'Effect', 'Spell']),
       filters: createSelectChoices(['Class', 'ID', 'Name']),
       numericOperators: createSelectChoices(['<', '<=', '==', '>=', '>', '!=']),
@@ -200,6 +219,14 @@ export default {
       try {
         const className = await this.classPrompt()
 
+        if (className == null || className.trim() === '') {
+          return this.$q.notify({
+            type: 'negative',
+            position: 'top',
+            message: 'A class was not selected.'
+          })
+        }
+
         this.dataSource = 'azerite'
         this.filter = 'class'
         this.operator = '=='
@@ -213,7 +240,18 @@ export default {
       await okFn()
 
       try {
-        const name = await this.textPrompt('Spell by name', 'Enter a spell name. You can enter a literal or pre-formatted name, e.g. Arcane Missiles or arcane_missiles.')
+        const name = await this.textPrompt(
+          this.$t('spellQuery.spellByNameTitle'),
+          this.$t('spellQuery.spellByNameBody')
+        )
+
+        if (name == null || name.trim().length === 0) {
+          return this.$q.notify({
+            type: 'negative',
+            position: 'top',
+            message: 'No spell name was specified.'
+          })
+        }
 
         this.dataSource = 'spell'
         this.filter = 'name'
@@ -235,7 +273,17 @@ export default {
       }
     },
     executeQuery () {
-      const query = `spell_query=${this.manualMode ? this.manualQuery : `${this.dataSource}.${this.filter}${this.operator}${this.argument}`}`
+      if (this.manualMode && (this.manualQuery == null || this.manualQuery.trim().length === 0)) {
+        return this.$q.notify({
+          type: 'negative',
+          position: 'top',
+          message: 'Spell query is blank.'
+        })
+      }
+
+      const query = `spell_query=${this.manualMode
+        ? this.manualQuery
+        : `${this.dataSource}.${this.filter}${this.operator}${this.argument}`}`
 
       this.$emit('execute-query', query)
     }
@@ -243,7 +291,10 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
+<style
+  lang="stylus"
+  scoped
+>
 .premades-dialog >>> .modal-header
   text-align: center
 </style>
