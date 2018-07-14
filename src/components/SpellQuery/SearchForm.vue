@@ -6,7 +6,7 @@
           class="row gutter-sm justify-between"
           v-if="manualMode"
         >
-          <div class="col-9">
+          <div class="col">
             <q-input
               v-model="manualQuery"
               float-label="Manual Query"
@@ -15,18 +15,14 @@
               @keyup.enter="executeQuery"
             />
           </div>
-          <div class="col">
-            <q-btn-group
-              push
-              class="full-width"
-            >
+          <div class="col-auto">
+            <q-btn-group push>
               <q-btn
                 push
                 color="primary"
                 label="Run"
                 size="form-label"
                 @click="executeQuery"
-                style="width: 50%"
               />
               <q-btn
                 push
@@ -34,7 +30,6 @@
                 label="Cancel"
                 size="form-label"
                 @click="manualMode = false"
-                style="width: 50%"
               />
             </q-btn-group>
           </div>
